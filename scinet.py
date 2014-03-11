@@ -7,16 +7,42 @@ import matplotlib.pyplot as plt
 
 def main(argv):
 
+  #Initial Configuration
+  
+  email = "email@example.net"
+  searchField = "Telomeres"
+  maxResults = 100
+
+  #Command Line Option Parsing
+
+  try:
+    opts, args = getopt.getopt(argv,"hq:e:n:",["query=","email=","number="])
+  except getopt.GetoptError:
+    print 'scinet.py -q <query> -e <your@email> -n <number>'
+    sys.exit(2)
+
+  for opt, arg in opts:
+    if opt == '-h':
+      print 'scinet.py -q <query> -e <your@email> -n <number>'
+      sys.exit()
+    elif opt in ("-q", "--query"):
+      searchField = arg
+    elif opt in ("-e", "--email"):
+      email = arg
+    elif opt in ("-n", "--number"):
+      maxResults = arg
+
+
   #Configure Entrez email, per requirement
-  pm.email = "kent.horvath@rutgers.edu"
+  pm.email = email
 
   #Construct an empty graph G, which represents the coauthorship of researchers in the telomere field
   G = nx.MultiGraph()
 
   #Get a list of the most recent articles in the specified field
-  field = " ".join(argv) if argv else "telomere"
-  print "Analyzing field %s" % field
-  results = pm.read(pm.esearch(db='pubmed', term=field, retmax=200))['IdList']
+  # field = " ".join(argv) if argv else "telomere"
+  print "Analyzing field %s" % searchField
+  results = pm.read(pm.esearch(db='pubmed', term=searchField, retmax=maxResults))['IdList']
   records = pm.parse(pm.efetch(db="pubmed", id=",".join(results), retmode="xml"))
 
   print "Retrieved list of articles"
