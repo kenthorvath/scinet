@@ -12,18 +12,19 @@ def main(argv):
   email = "email@example.net"
   searchField = "Telomeres"
   maxResults = 100
+  outfile= "output"
 
   #Command Line Option Parsing
 
   try:
-    opts, args = getopt.getopt(argv,"hq:e:n:",["query=","email=","number="])
+    opts, args = getopt.getopt(argv,"hq:e:n:o",["query=","email=","number=","output="])
   except getopt.GetoptError:
-    print 'scinet.py -q <query> -e <your@email> -n <number>'
+    print 'scinet.py -q <query> -e <your@email> -n <number> -o <output>'
     sys.exit(2)
 
   for opt, arg in opts:
     if opt == '-h':
-      print 'scinet.py -q <query> -e <your@email> -n <number>'
+      print 'scinet.py -q <query> -e <your@email> -n <number> -o <output>'
       sys.exit()
     elif opt in ("-q", "--query"):
       searchField = arg
@@ -31,7 +32,8 @@ def main(argv):
       email = arg
     elif opt in ("-n", "--number"):
       maxResults = arg
-
+    elif opt in ("-o", "--output"):
+      outfile = arg
 
   #Configure Entrez email, per requirement
   pm.email = email
@@ -71,7 +73,17 @@ def main(argv):
   print "Network topology complete"
 
   #visualize the graph G
-  nx.draw_graphviz(G)
+  nx.write_dot(G, outfile + ".dot")
+  
+  nodesDegree = nx.degree(G)
+  nx.draw(G, pos=nx.graphviz_layout(G,"sfdp",args="-GK=0.5"), 
+      nodelist=nodesDegree.keys(), 
+      node_size = [v*75 for v in nodesDegree.values()], 
+      style='dotted', 
+      node_color='red', 
+      font_size=16, 
+      font_weight='bold',
+      font_color='black')
   plt.show()
 
   #Find the cliques in G, which represent collaborative groups of researchers.
