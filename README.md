@@ -6,6 +6,7 @@ Scinet is a python utility to graph the social networks of researchers in a give
 # Requirements
 
 - Python
+- Biopython
 - NetworkX
 - Matplotlib
 
