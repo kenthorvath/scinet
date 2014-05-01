@@ -11,5 +11,5 @@ Scinet is a python utility to graph the social networks of researchers in a give
 
 # Useage
 
-scinet.py -q <pubmed query> -e <your@email> -n <max_results> -o <output>
+scinet.py -q `<pubmed_query> -e <your@email> -n <max_results> -o <output>`
 
